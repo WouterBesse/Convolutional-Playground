@@ -36,10 +36,14 @@ export default {
         return {
             rows: 3,
             cols: 3,
+            kernel_amount: 1,
             convData: [
-                [0, 0, 0],
-                [0, 0, 0],
-                [0, 0, 0]],
+                [
+                    [1., 1., 1.], 
+                    [0., 1., 0.], 
+                    [-1., -1., -1.]
+                ]
+            ],
         }
     },
     emits: ["kernel-change"],
@@ -52,12 +56,14 @@ export default {
     },
     methods: {
         populate_table: function () {
-            for (let i = 0; i < this.rows; i++) {
-                // let row = []
-                for (let j = 0; j < this.cols; j++) {
-                    this.convData[i][j] = 0
+            for (let k = 0; k < this.kernel_amount; k++) {
+                for (let i = 0; i < this.rows; i++) {
+                    // let row = []
+                    for (let j = 0; j < this.cols; j++) {
+                        this.convData[k][i][j] = 0
+                    }
+                    // .push(row)
                 }
-                // .push(row)
             }
         },
         set_convData: function (value, row, col) {

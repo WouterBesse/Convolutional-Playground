@@ -8,6 +8,7 @@
 <script>
 
 import * as tf from '@tensorflow/tfjs'
+// import * as tf from '@tensorflow/tfjs-backend-webgl'
 export default {
     name: "ImageCanvas",
     props: {
@@ -22,10 +23,13 @@ export default {
             height: 480,
             bOrA: true,
             divisor: 1,
-            custom: [
-                [1, 1, 1], 
-                [0, 1, 0], 
-                [-1, -1, -1]],
+            kernels: [
+                [
+                    [1., 1., 1.], 
+                    [0., 1., 0.], 
+                    [-1., -1., -1.]
+                ]
+            ],
             imageData: "",
             ogImageData: ""
         }
@@ -67,14 +71,47 @@ export default {
         },
         convolve: function(kernels) {
             let image = tf.browser.fromPixels(this.ogImageData, 3);
-            for (let kernel in kernels) {
-                const kernel_tensor = tf.tensor(kernel);
-                image = image.conv2d(kernel_tensor, 1, 'same');
+            let ogimage = image;
+            image = image.cast("float32")
+            for (let i = 0; i < kernels.length; i++) {
+                const [red, green, blue] = tf.split(image, 3, 2);
+
+                let kernel = kernels[i];
+                // const filter = tf.tensor2d(kernel);
+                let filter = tf.tensor2d(
+                    kernel
+                );
+                // filter = filter.transpose([2, 3, 0, 1]);
+
+                filter = filter.expandDims(2).expandDims(3);
+                // Remove the extra dimensions
+                filter.print(true)
+                red.max().print()
+                const redResult = tf.conv2d(red, filter, [1, 1], 'same');
+                const greenResult = tf.conv2d(green, filter, [1, 1], 'same');
+                const blueResult = tf.conv2d(blue, filter, [1, 1], 'same');
+
+                // const redNormalizedResult = tf.div(tf.sub(redResult, redResult.min()), tf.sub(redResult.max(), redResult.min())).mul(255);
+                // const blueNormalizedResult = tf.div(tf.sub(blueResult, blueResult.min()), tf.sub(blueResult.max(), blueResult.min())).mul(255);
+                // const greenNormalizedResult = tf.div(tf.sub(greenResult, greenResult.min()), tf.sub(greenResult.max(), greenResult.min())).mul(255);
+                
+
+                const combinedResult = tf.stack([redResult, greenResult, blueResult], 2);
+
+                const normalizedResult = tf.div(tf.sub(combinedResult, combinedResult.min()), tf.sub(combinedResult.max(), combinedResult.min())).mul(255);
+                normalizedResult.max().print()
+                normalizedResult.min().print()
+                const clampedResult = tf.clipByValue(normalizedResult, 0, 255).div(tf.scalar(255.0));
+                
+                image = clampedResult.squeeze();
             }
-            
+
+            image.print(true)        
             return image;
         },
         draw: function (img, width, height, newKern = false) {
+            tf.setBackend('cpu')
+            console.log(tf.getBackend());
             // const imageGet = require('get-image-data')
             this.loading = true;
 
@@ -116,13 +153,14 @@ export default {
             ctx.drawImage(img, 0, 0, input.width, input.height);
             
             let imageData = ctx.getImageData(0, 0, input.width, input.height);
-            this.imageData = imageData;
             this.ogImageData = imageData;
             // output = this.convolutionMatrix(imageData, this.custom, 0);
             // // output = this.convolutionMatrix(output, this.custom, 0);
+            let convolved_img = this.convolve(this.kernels);
+            // convolved_img.print(true);
+            tf.browser.draw(convolved_img, output);
             
-            
-            this.outputCtx.putImageData(image, 0, 0);
+            // this.outputCtx.putImageData(image, 0, 0);
         },
     },
     mounted() {

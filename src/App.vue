@@ -21,16 +21,18 @@ import Convolution from './components/ConvolutionKernelEditor.vue'
 </template>
 
 <script>
-import * as tf from '@tensorflow/tfjs-backend-webgl'
+
 export default {
     name: "ConvolutionApp",
     data() {
       return {
         kernel: [
-          [1, 1, 1],
-          [0, 1, 0],
-          [-1, -1, -1]
-        ],
+                [
+                    [1., 1., 1.], 
+                    [0., 1., 0.], 
+                    [-1., -1., -1.]
+                ]
+            ],
       }
     },
     methods: {
