@@ -87,9 +87,9 @@ export default {
                 // Remove the extra dimensions
                 filter.print(true)
                 red.max().print()
-                const redResult = tf.conv2d(red, filter, [1, 1], 'same');
-                const greenResult = tf.conv2d(green, filter, [1, 1], 'same');
-                const blueResult = tf.conv2d(blue, filter, [1, 1], 'same');
+                const redResult = tf.conv2d(red, filter, [1, 1], 'valid');
+                const greenResult = tf.conv2d(green, filter, [1, 1], 'valid');
+                const blueResult = tf.conv2d(blue, filter, [1, 1], 'valid');
 
                 // const redNormalizedResult = tf.div(tf.sub(redResult, redResult.min()), tf.sub(redResult.max(), redResult.min())).mul(255);
                 // const blueNormalizedResult = tf.div(tf.sub(blueResult, blueResult.min()), tf.sub(blueResult.max(), blueResult.min())).mul(255);
@@ -98,12 +98,16 @@ export default {
 
                 const combinedResult = tf.stack([redResult, greenResult, blueResult], 2);
 
-                const normalizedResult = tf.div(tf.sub(combinedResult, combinedResult.min()), tf.sub(combinedResult.max(), combinedResult.min())).mul(255);
-                normalizedResult.max().print()
-                normalizedResult.min().print()
-                const clampedResult = tf.clipByValue(normalizedResult, 0, 255).div(tf.scalar(255.0));
+                // const normalizedResult = tf.div(tf.sub(combinedResult, combinedResult.min()), tf.sub(combinedResult.max(), combinedResult.min())).mul(255);
+                // const normalizedResult = combinedResult.div(combinedResult.max()).mul(255);
+                // normalizedResult.max().print()
+                // normalizedResult.min().print()
+                const clampedResult = tf.clipByValue(combinedResult, 0, 255).div(tf.scalar(255.0));
                 
                 image = clampedResult.squeeze();
+                console.log('imagemaxes')
+                image.max().print()
+                image.min().print()
             }
 
             image.print(true)        
@@ -111,7 +115,6 @@ export default {
         },
         draw: function (img, width, height, newKern = false) {
             tf.setBackend('cpu')
-            console.log(tf.getBackend());
             // const imageGet = require('get-image-data')
             this.loading = true;
 
