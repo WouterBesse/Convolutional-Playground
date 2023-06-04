@@ -10,7 +10,7 @@ import Convolution from './components/ConvolutionKernelEditor.vue'
         <Convolution @kernel-change="changeKernel"/>
       </div>
       <div class="imgwrapper">
-        <ImgRender :kernel="kernel" ref="image"/>
+        <ImgRender :kernels="kernel" ref="image"/>
       </div>
   </div>
 
@@ -26,7 +26,7 @@ export default {
     name: "ConvolutionApp",
     data() {
       return {
-        kernel: [
+        kernels: [
                 [
                     [1., 1., 1.], 
                     [0., 1., 0.], 
@@ -36,10 +36,10 @@ export default {
       }
     },
     methods: {
-      changeKernel: function (newKernel) {
+      changeKernel: function (newKernels) {
         console.log("Changing kernel")
-        this.kernel = newKernel
-        this.$refs.image.updateConvolution(newKernel)
+        this.kernels = newKernels
+        this.$refs.image.updateConvolution(newKernels)
       }
     }
   }
@@ -51,16 +51,26 @@ export default {
     display: flex;
     place-items: flex-start;
     flex-wrap: wrap;
+    width: 100vw;
+    margin: 0;
+  }
+
+  #app {
+    margin: 0 0 !important;
+    padding: 0 !important;
+    max-width: 100vw;
+    width: 100vw;
   }
 
   .imgwrapper {
     margin: auto;
     width: 40%;
+    left: 0;
   }
 
   .convwrapper {
     width: 40%;
-    
+    right: 0;
     margin: auto;
   }
 }
