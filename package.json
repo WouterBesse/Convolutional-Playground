@@ -1,6 +1,6 @@
 {
   "name": "convolution-illusion",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -14,8 +14,7 @@
     "@tensorflow/tfjs-backend-webgpu": "^4.6.0",
     "@tensorflow/tfjs-converter": "^4.6.0",
     "@tensorflow/tfjs-core": "^4.6.0",
-    "vue": "^3.2.47",
-    "vue-p5": "file:H:/Downloads/vue-p5-master"
+    "vue": "^3.2.47"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
