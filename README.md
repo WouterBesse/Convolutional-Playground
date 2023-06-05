@@ -1,14 +1,7 @@
 # Convolution Illusion
 
-This template should help get you started developing with Vue 3 in Vite.
-
-## Recommended IDE Setup
-
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+A simple little website where you can play around with convolutional filters, build using vue3 and tensorflow.js.
+You can add and remove convolutional filters, and set their weights. Secretly, every convolutional operation is followed by a leaky ReLU filter.
 
 ## Project Setup
 
