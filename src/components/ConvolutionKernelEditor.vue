@@ -1,5 +1,5 @@
 <template>
-    <div class="convwrapper">
+    <div class="gridwrapper">
         <TransitionGroup appear name="list" >
             <div class="convtablewrap" v-for="k in kernel_amount" :key="k">
                 <div class="kerneltitle">
@@ -11,23 +11,27 @@
                         <td v-for="c in cols" class="cell">
                             <input class="conv-input"
                                 type="number"
+                                placeholdder=0
+                                aria-label="conv-value"
+                                aria-labelledby="firstname"
+                                
+                                onfocus="this.value=''"
                                 max="64"
                                 min="-64"
-                                :value="convData[k - 1][r-1][c-1]"
-                                @focus="$event.target.value = ''"
+                                
                                 @input="set_convData($event.target.value, k-1, r-1, c-1)"
                                 @blur="$event.target.value = convData[k - 1][r-1][c-1]; send_convData()">
                                 <!-- <input class="conv-input"
                                 type="number"
                                 v-model="convData[k - 1][r-1][c-1]"
+                                :value="convData[k - 1][r-1][c-1]"
                                 > -->   
                         </td>
                     </tr>
                 </table>
             </div>
         </TransitionGroup>
-    </div>
-    <div class="buttons">
+        <div class="buttons">
         <div class="plusicon" @click="add_kernel">
             +
         </div>
@@ -35,6 +39,8 @@
             -
         </div>
     </div>
+    </div>
+    
 </template>
 
 <script>
@@ -50,9 +56,9 @@ export default {
             kernel_amount: 1,
             convData: [
                 [
-                    [1., 1., 1.], 
+                    [0., 0., 0.], 
                     [0., 1., 0.], 
-                    [-1., -1., -1.],
+                    [0., 0., 0.],
                 ],
             ]
         }
@@ -67,17 +73,24 @@ export default {
     },
     methods: {
         populate_table: function () {
-            for (let k = 0; k < this.kernel_amount; k++) {
-                for (let i = 0; i < this.rows; i++) {
-                    // let row = []
-                    for (let j = 0; j < this.cols; j++) {
-                        this.convData[k][i][j] = 0.
-                    }
-                    // .push(row)
+            let grid = document.getElementsByClassName("convtable")
+            console.log(grid, this.kernel_amount -1)
+            grid = grid[this.kernel_amount -1]
+            console.log(grid)
+            for (let i = 0; i < this.rows; i++) {
+                let row = grid.getElementsByTagName("tr")[i]
+                // let row = []
+                for (let j = 0; j < this.cols; j++) {
+                    let cell = row.getElementsByTagName("td")[j].getElementsByTagName("input")[0]
+                    cell.setAttribute('value',this.convData[this.kernel_amount - 1][i][j]);
+                    // this.convData[k][i][j] = 0.;
                 }
+                // .push(row)
             }
+            
         },
         set_convData: function (value, kernel, row, col) {
+            console.log(value)
             value = parseFloat(value)
             this.convData[kernel][row][col] = value
         },
@@ -92,6 +105,8 @@ export default {
                 [0., 0., 0.],
             ])
             this.kernel_amount += 1
+            this.populate_table()
+            this.send_convData()
         },
         remove_kernel: function () {
             if (this.kernel_amount > 1) {
@@ -100,28 +115,32 @@ export default {
             }
         }
     },
-    beforeMount() {
+    mounted() {
         this.populate_table()
-        console.log("convdata", this.convData)
+        // console.log("convdata", this.convData)
         // this.$emit("kernelChange", this.convData)
     }
 }
 </script>
 
 <style scoped>
-.convwrapper {
-    color:black;
+.gridwrapper {
+    color:#744253;
     margin: auto;
     display: flex;
     width: 50vw;
     flex-wrap:wrap;
     justify-content: center;
+    padding: 25px;
 }
 
 .convtable {
     /*border: black 3px solid;*/
     border-collapse: separate;
     border-spacing: 0px;
+    background-color: #F3D9DC;
+    border-radius: 10px;
+    color: #744253;
     /* margin: auto; */
     /* margin: 10px; */
 }
@@ -141,46 +160,50 @@ export default {
     padding: 0px;
     margin: 0px;
     width: 4em !important;
-    max-width: 4em;
+    /* max-width: 4em; */
+    
     height: 4em;
+    max-height: 4em !important;
     text-align: center;
-    vertical-align: center;
+    /* vertical-align: center; */
+    color: #744253 !important;
+    
 }
 
 .convtable td {
-    border: black 2px solid;
+    border: #744253 2px solid;
     vertical-align: top;
 }
 
 /* Ugly stuff to make a rounded table */
 tr:first-of-type td {
-    border-top: black 4px solid;
+    border-top: #744253 4px solid;
 }
 
 tr:last-of-type td {
-    border-bottom: black 4px solid;
+    border-bottom: #744253 4px solid;
 }
 tr:first-of-type td:first-of-type {
     border-top-left-radius: 10px;
-    border-left: black 4px solid;
+    border-left: #744253 4px solid;
 }
 tr:first-of-type td:last-of-type {
     border-top-right-radius: 10px;
-    border-right: black 4px solid;
+    border-right: #744253 4px solid;
 }
 tr:last-of-type td:first-of-type {
     border-bottom-left-radius: 10px;
-    border-left: black 4px solid;
+    border-left: #744253 4px solid;
 }
 tr:last-of-type td:last-of-type {
     border-bottom-right-radius: 10px;
-    border-right: black 4px solid;
+    border-right: #744253 4px solid;
 }
 .convtable tr:not(:first-child):not(:last-child) td:first-of-type {
-    border-left: black 4px solid;
+    border-left: #744253 4px solid;
 }
 .convtable tr:not(:first-child):not(:last-child) td:last-of-type {
-    border-right: black 4px solid;
+    border-right: #744253 4px solid;
 }
 
 .conv-input {
@@ -188,8 +211,19 @@ tr:last-of-type td:last-of-type {
     border-color:transparent;
     background-color: transparent;
     text-align: center;
-    width: 4em;
-    height: 4em;
+    margin: auto;
+    line-height: 4.0em;
+    font-weight: 600;
+    font-size: 1.2em;
+    padding: 0px;
+    color:#744253;
+}
+
+.conv-input::placeholder {
+    color: #744253;
+    opacity: 100;
+    font-weight: 600;
+    font-size: 1.2em;
 }
 
 .conv-input:focus {
@@ -210,22 +244,33 @@ tr:last-of-type td:last-of-type {
     margin: auto;
     width: 50vw;
 }
+
+
 .plusicon {
     width: 1em;
     height: 1em;
     border: 0 !important;
     padding: 0px;
     border-color:transparent !important;
-    background-color: red;
+    background-color: #744253;
     text-align: center;
     font-size: 3em;
-    line-height: 0.8em;
+    line-height: 1.0em;
+    font-weight: 500;
     border-radius: 100%;
-    color: black;
+    color: #F3D9DC;
     cursor: pointer;
     vertical-align: center;
     /* margin: auto; */
     margin: 10px;
+    user-select: none;
+    transition: all 0.2s ease;
+}
+
+.plusicon:hover {
+    background-color: #C78283;
+    box-shadow: 0px 0px 10px 0px #c78283a8;
+    cursor: pointer;
 }
 
 .list-enter-active,

@@ -27,9 +27,9 @@ export default {
             divisor: 1,
             kernels: [
                 [
-                    [1., 1., 1.], 
+                    [0., 0., 0.], 
                     [0., 1., 0.], 
-                    [-1., -1., -1.]
+                    [0., 0., 0.]
                 ]
             ],
             imageData: "",
@@ -62,21 +62,21 @@ export default {
 
                 filter = filter.expandDims(2).expandDims(3);
 
-                const redResult = tf.conv2d(red, filter, [1, 1], 'same');
-                const greenResult = tf.conv2d(green, filter, [1, 1], 'same');
-                const blueResult = tf.conv2d(blue, filter, [1, 1], 'same');                
+                const redResult = tf.conv2d(red, filter, [1, 1], 'valid');
+                const greenResult = tf.conv2d(green, filter, [1, 1], 'valid');
+                const blueResult = tf.conv2d(blue, filter, [1, 1], 'valid');                
 
                 const combinedResult = tf.stack([redResult, greenResult, blueResult], 2);
-
-                // const normalizedResult = tf.div(tf.sub(combinedResult, combinedResult.min()), tf.sub(combinedResult.max(), combinedResult.min())).mul(255);
+                const activatedResult = combinedResult.leakyRelu(0.1)
+                image = tf.div(tf.sub(activatedResult, activatedResult.min()), tf.sub(activatedResult.max(), activatedResult.min()));
                 // const normalizedResult = combinedResul   t.div(combinedResult.max()).mul(255);
                 
                 // const normalizedImage = combinedResult.sub(combinedResult.min()).div(combinedResult.max().sub(combinedResult.min()));
                 
-                image = combinedResult.squeeze();
+                image = image.squeeze();
                 // console.log('imagemaxes')
-                // image.max().print()
-                // image.min().print()
+                image.max().print()
+                image.min().print()
             }   
             // ogimage.mean(2).print(true)
             // image.print(true)
@@ -118,7 +118,6 @@ export default {
                 output.width = (480 * width) / height;
                 let left = 400 - (240 * width) / height;
                 output.style.top = "0px";
-                output.style.left = left + "px";
                 display.appendChild(output);
             }
 
@@ -149,3 +148,25 @@ export default {
         
 };
 </script>
+
+<style>
+#output {
+    margin: auto;
+    border-radius: 25px;
+    border: #744253 4px solid;
+    width: 50vh;
+}
+
+@media (min-width: 1024px) {
+    #output {
+        margin: auto;
+        border-radius: 25px;
+        border: #744253 4px solid;
+        width: 40vw;
+    }
+}
+
+.canvas-display {
+    display: flex;
+}
+</style>

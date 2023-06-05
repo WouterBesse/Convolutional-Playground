@@ -60,6 +60,11 @@ export default {
     padding: 0 !important;
     max-width: 100vw;
     width: 100vw;
+    background: #EF8354 !important;
+  }
+
+  body {
+    background: #EF8354 !important;
   }
 
   .imgwrapper {
@@ -69,9 +74,11 @@ export default {
   }
 
   .convwrapper {
-    width: 40%;
+    width: 50vw;
     right: 0;
-    margin: auto;
+    margin: 0;
+    min-height: 100vh;
+    display:flex;
   }
 }
 </style>
